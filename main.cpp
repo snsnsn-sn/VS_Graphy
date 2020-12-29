@@ -95,7 +95,7 @@ void init()
 	DrawRoomSample();
 	mFbo->Unbind();
 
-	shadowMap = mFbo->GetBuffer("depth");
+	shadowMap = mFbo->GetBuffer("depth");//µÃµ½Éî¶È»º³åÇø
 
 	glClearColor(0.6f, 0.6f, 0.8f, 1.0f);
 }
@@ -156,7 +156,12 @@ void keyFunc(GLubyte key, int x, int y)          // ¼üÅÌ½»»¥º¯Êı£¬   wsÒÆ¶¯ÉãÏñ»
 	case 'l': case 'L':
 		lightOn = lightOn == 1 ? 0 : 1;
 		break;
-	}
+	
+	/*case 'm': case 'M':
+		changecolor += 0.5;
+		if (changecolor > 2) changecolor = 0;
+		break;
+	}*/
 
 	viewMatrix = glm::lookAt(cameraPos, cameraCenter, glm::vec3(0.0f, 1.0f, 0.0f));
 	//viewMatrix = glm::lookAt(cameraPos, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -256,18 +261,22 @@ void DrawRoom()
 	glUniformMatrix4fv(renderLightVMatrixLoc, 1, GL_FALSE, glm::value_ptr(lightViewMatrix));
 	glUniform1i(renderLightOnLoc, lightOn);
 
-	glBindTextureUnit(0, roomTexture);      // °ó¶¨ÎÆÀí
-	glBindTextureUnit(1, shadowMap);
+	glBindTextureUnit(0, roomTexture);      // °ó¶¨ÎÆÀí£¬´«ÈëLight.fsµÄbinding = 0 £¬1
+	glBindTextureUnit(1, shadowMap);//Éî¶È»º´æ´æ½øÈ¥¡£ÓÃÀ´ÅĞ¶ÏÊÇ·ñÔÚÒõÓ°ÖĞ
 
 	if (bDrawRoom1)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, roomVbo);              
 		glEnableVertexAttribArray(renderPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
+		//¶¥µãÎ»ÖÃÊôĞÔ
 		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
 		glEnableVertexAttribArray(renderTexcoordLoc);
+		//¶¥µãÎÆÀíÊôĞÔ
 		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
 		glEnableVertexAttribArray(renderNormalLoc);
+		//¶¥µãÑÕÉ«ÊôĞÔ
 		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
@@ -315,7 +324,7 @@ void DrawRoomSample()
 		
 		glEnableVertexAttribArray(depthPosLoc);//glEnableVertexAttribArray(index)ÆôÓÃindexÖ¸¶¨µÄÍ¨ÓÃ¶¥µãÊôĞÔÊı×é
 		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);//µÚ¶ş¸ö²ÎÊıÖ¸¶¨¶¥µãÊôĞÔµÄ´óĞ¡¡£¶¥µãÊôĞÔÊÇÒ»¸övec3£¬ËüÓÉ3¸öÖµ×é³É£¬ËùÒÔ´óĞ¡ÊÇ3¡£
-		
+		//´«µ½vsµÄlayout=0,1,2µÄÎ»ÖÃ
 		glEnableVertexAttribArray(depthTexcoordLoc);
 		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
 		

@@ -28,6 +28,8 @@ GLuint renderTextureLoc, shadowMapLoc;
 GLuint depthPosLoc, depthTexcoordLoc, depthNormalLoc;
 GLuint depthMLoc, depthVLoc, depthPLoc;
 
+GLint changecolor = 0;//改变纹理颜色
+
 // VertexData  and  VBO、IBO
 VertexData* roomVertexData;
 int roomVertexCount, roomIndexCount;
