@@ -160,8 +160,8 @@ void keyFunc(GLubyte key, int x, int y)          // ¼üÅÌ½»»¥º¯Êý£¬   wsÒÆ¶¯ÉãÏñ»
 	/*case 'm': case 'M':
 		changecolor += 0.5;
 		if (changecolor > 2) changecolor = 0;
-		break;
-	}*/
+		break;*/
+	}
 
 	viewMatrix = glm::lookAt(cameraPos, cameraCenter, glm::vec3(0.0f, 1.0f, 0.0f));
 	//viewMatrix = glm::lookAt(cameraPos, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
