@@ -24,9 +24,9 @@ GLuint CreateBufferObject(GLenum bufferType, GLsizeiptr size, GLenum usage, void
 {
 	GLuint object;
 	glGenBuffers(1, &object);//创建一个帧缓冲对象(Framebuffer Object, FBO)：
-	glBindBuffer(bufferType, object);
-	glBufferData(bufferType, size, data, usage);
-	glBindBuffer(bufferType, 0);
+	glBindBuffer(bufferType, object);//第一个参数指定绑定的参数类型，
+	glBufferData(bufferType, size, data, usage);//把用户定义的数据传输到当前绑定的显存缓冲区中
+	glBindBuffer(bufferType, 0);//usage指定数据存储的预期使用模式。 符号常量必须为GL_STREAM_DRAW，GL_STATIC_DRAW或GL_DYNAMIC_DRAW
 	return object;
 }
 

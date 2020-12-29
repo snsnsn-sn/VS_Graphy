@@ -70,9 +70,10 @@ void init()
 	depthPLoc = glGetUniformLocation(depthProgram, "P");
 	//第一个房间模型
 	roomVertexData = LoadObjModel("Res/room.obj", &roomIndexes, roomVertexCount, roomIndexCount);	//顶点的索引信息，顶点个数，索引个数
-
+	//VBO就是把要绘制的顶点信息直接缓存在显卡内存中,VBO为顶点缓冲区对象，用于存储顶点坐标/顶点uv/顶点法线/顶点颜色，
 	roomVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * roomVertexCount,
-		GL_STATIC_DRAW, roomVertexData);
+		GL_STATIC_DRAW, roomVertexData);//创建vbo缓存，第一个参数是数据类型，第二个是顶点个数，第三个是，第四个是顶点信息
+	//IBO为索引缓冲区，里面的值可以是unsigned int或者unsigned short。
 	roomIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount,	GL_STATIC_DRAW, roomIndexes);	   // 创建vbo  ibo
 	//第二个房间模型
 	roomVertexData2 = LoadObjModel("Res/room2.obj", &roomIndexes2, roomVertexCount2, roomIndexCount2);
@@ -85,11 +86,11 @@ void init()
 
 	//以下是FBO技术，用到FBO.h 和 FBO.cpp
 	mFbo = new FrameBufferObject;												//FBO.h
-	mFbo->AttachColorBuffer("color", GL_COLOR_ATTACHMENT0, 800, 600);			//绑定一个colorbuffer，800,600是屏幕宽高
-	mFbo->AttachDepthBuffer("depth", 800, 600);									//绑定一个depthbuffer，800,600是屏幕宽高
+	mFbo->AttachColorBuffer("color", GL_COLOR_ATTACHMENT0, 800, 600);			//绑定一个colorbuffer，800,600是屏幕宽高，存入“color”
+	mFbo->AttachDepthBuffer("depth", 800, 600);									//绑定一个depthbuffer，800,600是屏幕宽高，存入“depth”
 	mFbo->Finish();
 
-	mFbo->Bind();
+	mFbo->Bind();//绑定当前的framebuffer，清除缓冲区
 	glClear(GL_DEPTH_BUFFER_BIT);
 	DrawRoomSample();
 	mFbo->Unbind();
@@ -270,8 +271,15 @@ void DrawRoom()
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo);        // 利用ibo中的index绘制图形
+		/**   void glDrawElements(GLenum mode,GLsizei count,GLenum type,const GLvoid *indices);
+		*mode:接受的值和在glBegin()中接受的值一样，可以是GL_POLYGON、GL_TRIANGLES、GL_TRIANGLE_STRIP、GL_LINE_STRIP等。
+		*count：组合几何图形的元素的个数，一般是点的个数。
+		*type:indeices数组的数据类型，既然是索引，一般是整型的。
+		*indices:索引数组
+		*/
 		glDrawElements(GL_TRIANGLES, roomIndexCount, GL_UNSIGNED_INT, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		//将当前活动内存设置为空，非必须
 	}
 	else if (!bDrawRoom1)
 	{
@@ -296,6 +304,7 @@ void DrawRoomSample()
 {
 	modelMatrix = glm::scale(2.0f, 2.0f, 2.0f);
 	glUseProgram(depthProgram);
+	//uniform的位置，需要加载数据的数组元素的数量或者需要修改的矩阵的数量，指明矩阵是列优先(column major)矩阵（GL_FALSE）还是行优先(row major)矩阵（GL_TRUE）指向由count个元素的数组的指针。
 	glUniformMatrix4fv(depthMLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glUniformMatrix4fv(depthVLoc, 1, GL_FALSE, glm::value_ptr(lightViewMatrix));
 	glUniformMatrix4fv(depthPLoc, 1, GL_FALSE, glm::value_ptr(lightProjectionMatrix));
@@ -303,12 +312,16 @@ void DrawRoomSample()
 	if (bDrawRoom1)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, roomVbo);
-		glEnableVertexAttribArray(depthPosLoc);
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
+		
+		glEnableVertexAttribArray(depthPosLoc);//glEnableVertexAttribArray(index)启用index指定的通用顶点属性数组
+		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);//第二个参数指定顶点属性的大小。顶点属性是一个vec3，它由3个值组成，所以大小是3。
+		
 		glEnableVertexAttribArray(depthTexcoordLoc);
 		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
+		
+		glEnableVertexAttribArray(depthNormalLoc);//第四个参数定义我们是否希望数据被标准化(Normalize)。如果我们设置为GL_TRUE，所有数据都会被映射到0（对于有符号型signed数据是-1）到1之间。我们把它设置为GL_FALSE。
 		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+		//第五个参数叫做步长(Stride)，它告诉我们在连续的顶点属性组之间的间隔。由于下个组位置数据在1个float之后，我们把步长设置为1 * sizeof(float)
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo);
