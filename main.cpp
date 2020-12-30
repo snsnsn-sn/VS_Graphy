@@ -4,6 +4,7 @@
 #pragma comment(lib, "soil.lib")
 #pragma comment(lib, "glew32.lib")
 
+//冯氏光照模型(Phong Lighting Model)->由环境(Ambient)、漫反射(Diffuse)和镜面(Specular)光照三个分量组成
 FrameBufferObject* mFbo;
 
 bool bCameraRotate = false;   //  摄像机是否允许旋转
@@ -251,6 +252,7 @@ void DrawRoom()
 	*transpose : 指明矩阵是列优先(column major)矩阵（GL_FALSE）还是行优先(row major)矩阵（GL_TRUE）。
 	*value : 指向由count个元素的数组的指针
 	*/
+	//在Simple.vs中的Pos位置向量、Normal法向量,Texcoord纹理坐标向量
 	glUseProgram(renderProgram);
 	glUniformMatrix4fv(renderMLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));             // 向gpu program中传值
 	glUniformMatrix4fv(renderVLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));			//这些参数都在47行赋值
