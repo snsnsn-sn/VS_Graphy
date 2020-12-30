@@ -71,24 +71,24 @@ GLuint CreateTexture(const char* imgFileName)
 }
 
 GLuint CreateGPUProgram(const char* vsShaderPath, const char* fsShaderPath)
-{
+{//首先创建一个对象作为shader的容器，这个创建函数将返回容器的句柄。
 	GLuint vsShader = glCreateShader(GL_VERTEX_SHADER);  // GL_VERTEX_SHADER类型的着色器是一个用于在可编程顶点处理器上运行的着色器
 	GLuint fsShader = glCreateShader(GL_FRAGMENT_SHADER);	//GL_FRAGMENT_SHADER类型的着色器是一个着色器，旨在在可编程片段处理器上运行
 	const char* vsCode = LoadFileContent(vsShaderPath);
 	const char* fsCode = LoadFileContent(fsShaderPath);
-	glShaderSource(vsShader, 1, &vsCode, nullptr);
+	glShaderSource(vsShader, 1, &vsCode, nullptr);//添加源代码。shader的源代码是一个字符串数组
 	glShaderSource(fsShader, 1, &fsCode, nullptr);//ram -> vram
-	glCompileShader(vsShader);
+	glCompileShader(vsShader);//编译shader
 	glCompileShader(fsShader);
 	printShaderInfoLog(vsShader);
 	printShaderInfoLog(fsShader);
-	GLuint program = glCreateProgram();
-	glAttachShader(program, vsShader);
+	GLuint program = glCreateProgram();//首先创建一个对象，作为程序的容器
+	glAttachShader(program, vsShader);//把上一节编译的shader附加到刚刚创建的程序中
 	glAttachShader(program, fsShader);
-	glLinkProgram(program);
-	glDetachShader(program, vsShader);
+	glLinkProgram(program);//连接程序
+	glDetachShader(program, vsShader);//附加一个shader到一个程序中，这里的调用是将shader从程序中分离
 	glDetachShader(program, fsShader);
-	glDeleteShader(vsShader);
+	glDeleteShader(vsShader);//如果一个shader还附加在某个程序中，这个shader并不能真正删除，只能标记为删除。当这个shader从所有程序中分离之后，才会被最终删除。
 	glDeleteShader(fsShader);
 	return program;
 }
