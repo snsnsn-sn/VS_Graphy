@@ -66,7 +66,7 @@ void main()
 	vec3 viewDir=normalize(ViewPos-V_WorldPos.xyz);
 	
 	//乘以128次方幂，是高光的反光度，越高则高光点越小
-	vec4 specularColor=SpecularLightColor*SpecularMaterial*pow(max(0.0,dot(viewDir,reflectDir)),128.0);
+	vec4 specularColor=SpecularLightColor*SpecularMaterial*pow(max(0.0,dot(viewDir,reflectDir)),32.0);
 	
 	if(lightOn == 1)
 	{
