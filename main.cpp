@@ -50,7 +50,7 @@ void init()
 	renderPosLoc = 0;
 	renderTexcoordLoc = 1;
 	renderNormalLoc = 2;
-	renderMLoc = glGetUniformLocation(renderProgram, "M");       //  获取gpu program中参数的位置
+	renderMLoc = glGetUniformLocation(renderProgram, "M");       //  获取gpu program中参数的位置，这些getUniformLocation只是得到值的位置，还没正式赋值
 	renderVLoc = glGetUniformLocation(renderProgram, "V");
 	renderPLoc = glGetUniformLocation(renderProgram, "P");
 	renderNMLoc = glGetUniformLocation(renderProgram, "NM");
@@ -84,6 +84,7 @@ void init()
 	roomIbo2 = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount2, GL_STATIC_DRAW, roomIndexes2);
 
 	glEnable(GL_DEPTH_TEST);
+	//要在每次渲染迭代之前清除深度缓存glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//以下是FBO技术，用到FBO.h 和 FBO.cpp
 	mFbo = new FrameBufferObject;												//FBO.h

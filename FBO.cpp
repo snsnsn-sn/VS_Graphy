@@ -51,7 +51,7 @@ void FrameBufferObject::Finish() {
 	}
 }
 void FrameBufferObject::Bind() {
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &mPrevFrameBuffer);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &mPrevFrameBuffer);//获得OpenGL所支持的最大纹理，这样mPrevFrameBuffer的值就是当前OpenGL实现中所支持的最大纹理
 	glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObject);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
