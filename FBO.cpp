@@ -1,7 +1,7 @@
 #include"FBO.h"
 
 FrameBufferObject::FrameBufferObject() {
-	glGenFramebuffers(1, &mFrameBufferObject);
+	glGenFramebuffers(1, &mFrameBufferObject);//生成一个FBO，存入mFrameBuffer中
 }
 
 //颜色缓冲区（COLOR_BUFFER）就是帧缓冲区（FRAME_BUFFER）,你需要渲染的场景最终每一个像素都要写入该缓冲区,然后由它在渲染到屏幕上显示.

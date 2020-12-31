@@ -255,7 +255,7 @@ void DrawRoom()
 	//在Simple.vs中的Pos位置向量、Normal法向量,Texcoord纹理坐标向量
 	glUseProgram(renderProgram);
 	glUniformMatrix4fv(renderMLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));             // 向gpu program中传值
-	glUniformMatrix4fv(renderVLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));			//这些参数都在47行赋值
+	glUniformMatrix4fv(renderVLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));			//这些参数都在53行获得位置句柄，然后在这里赋值
 	glUniformMatrix4fv(renderPLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 	glUniformMatrix4fv(renderNMLoc, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 	glUniform3fv(renderViewPosLocation, 1, glm::value_ptr(cameraPos));
@@ -276,7 +276,7 @@ void DrawRoom()
 		//顶点纹理属性
 		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
 		glEnableVertexAttribArray(renderNormalLoc);
-		//顶点颜色属性
+		//顶点法向量属性
 		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
 
 
