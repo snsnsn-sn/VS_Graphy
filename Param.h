@@ -1,5 +1,5 @@
 #pragma once
-#include<GL/glut.h>
+#include<GL/freeglut.h>
 #include"model.h"
 #include"Glm/glm.hpp"
 #include"Glm/ext.hpp"
