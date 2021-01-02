@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include"SOIL2.h"
 #include<stdlib.h>
-#include<gl/glut.h>
+#include<gl/freeglut.h>
 void printShaderInfoLog(GLuint obj)
 {
 	int infologLength = 0;

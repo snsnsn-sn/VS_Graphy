@@ -36,10 +36,10 @@ GLuint depthMLoc, depthVLoc, depthPLoc;
 //unsigned int* roomIndexes;
 //GLuint roomVbo, roomIbo;
 //
-//VertexData* roomVertexData2;
-//int roomVertexCount2, roomIndexCount2;
-//unsigned int* roomIndexes2;
-//GLuint roomVbo2, roomIbo2;
+VertexData* roomVertexData2;
+int roomVertexCount2, roomIndexCount2;
+unsigned int* roomIndexes2;
+GLuint roomVbo2, roomIbo2;
 //
 //VertexData* roomVertexData3;
 //int roomVertexCount3, roomIndexCount3;
@@ -63,6 +63,8 @@ GLuint wallYellowVbo, wallGreenVbo, wallWhiteVbo, wallOrangeVbo, wallBlueVbo;//²
 int changeWall = 0;//ÇĞ»»¿ÍÌüÇ½±ÚµÄÑÕÉ«
 int changeBed = 0;//ÇĞ»»´²
 int changeCurtain = 0;//ÇĞ»»´°Á±
+
+int changeStyle = 0;//ÇĞ»»·¿¼ä£¬¿É±ä³Éµ¥¶ÀÄ£ĞÍºÍ²ğ·ÖÄ£ĞÍ
 //ÄÚ²¿
 VertexData* roomVertexData;
 int roomVertexCount, roomIndexCount;
@@ -129,3 +131,5 @@ glm::vec3 up; //ÉÏÏòÁ¿
 glm::vec3 cameraRight;//ÓÒÏòÁ¿
 glm::vec3 cameraUp;//ÉÏÏòÁ¿
 float cameraSpeed = 2.5f;//·½ÏòÒÆ¶¯ËÙ¶È
+
+float fov = 60.0f; //ÉãÏñ»úÊÓ½Ç£¬Í¨¹ı¼àÌıÊó±ê¹öÂÖ£¬´Ó¶ø´¥·¢Ôö¼Ó¼õĞ¡ÊÓ½Ç£¬
