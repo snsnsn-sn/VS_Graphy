@@ -1,6 +1,7 @@
 #include"misc.h"
 #include"FBO.h"
 #include"Param.h"
+#include<gl/freeglut.h>
 #pragma comment(lib, "soil.lib")
 #pragma comment(lib, "glew32.lib")
 
@@ -396,6 +397,7 @@ void DrawRoom()
 	glUseProgram(renderProgram);
 	glUniformMatrix4fv(renderMLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));             // 向gpu program中传值
 	glUniformMatrix4fv(renderVLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));			//这些参数都在53行获得位置句柄，然后在这里赋值
+	projectionMatrix = glm::perspective(fov, 800.0f / 600.0f, 0.1f, 800.0f);//投影矩阵，因滚轮修改了fov参数，所以需要实时传递矩阵给着色器程序
 	glUniformMatrix4fv(renderPLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 	glUniformMatrix4fv(renderNMLoc, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 	glUniform3fv(renderViewPosLocation, 1, glm::value_ptr(cameraPos));
