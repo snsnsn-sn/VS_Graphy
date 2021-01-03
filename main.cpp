@@ -410,9 +410,9 @@ void DrawRoom()
 
 	if (changeStyle == 2) {
 		//绘制客厅===============================================================
-		glEnableVertexAttribArray(renderPosLoc);
-		glEnableVertexAttribArray(renderTexcoordLoc);
-		glEnableVertexAttribArray(renderNormalLoc);
+		glEnableVertexAttribArray(renderPosLoc);//light.fs 位置属性
+		glEnableVertexAttribArray(renderTexcoordLoc);//light.fs 纹理属性
+		glEnableVertexAttribArray(renderNormalLoc);//light.fs 法向量属性
 
 		//开始绘制客厅内部------------------------------------------------------------------------------------------------
 		glBindBuffer(GL_ARRAY_BUFFER, roomVbo);
