@@ -29,6 +29,111 @@ int lightOn = 1;   // 是否开启光照
 
 float sunlight = 50.0;//光源的位置
 
+					  /**
+* @方法:读取模型
+* @说明: VertexData: obj模型的全部顶点数据
+*        Vbo:顶点缓冲对象,存储顶点的各类属性信息
+*        IBO:索引缓冲对象,存储顶点索引,减少传输顶点数据,提高效率
+*
+*  注:方法中的变量于Param.h中声明
+*/
+void readModel() {
+	//整体墙壁
+	wallVertexData = LoadObjModel("Res/group1/wall.obj", &wallIndexes, wallVertexCount, wallIndexCount);
+	wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wallVertexData);
+	wallIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * wallIndexCount, GL_STATIC_DRAW, wallIndexes);
+
+	//整体地板
+	floorVertexData = LoadObjModel("Res/group1/floor.obj", &floorIndexes, floorVertexCount, floorIndexCount);
+	floorVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * floorVertexCount, GL_STATIC_DRAW, floorVertexData);
+	floorIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * floorIndexCount, GL_STATIC_DRAW, floorIndexes);
+
+	//客厅内部(不含墙壁)
+	roomVertexData = LoadObjModel("Res/group1/livingRoom.obj", &roomIndexes, roomVertexCount, roomIndexCount);
+	roomVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * roomVertexCount, GL_STATIC_DRAW, roomVertexData);
+	roomIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount, GL_STATIC_DRAW, roomIndexes);
+
+	//桌子
+	tableVertexData = LoadObjModel("Res/group1/table.obj", &tableIndexes, tableVertexCount, tableIndexCount);
+	tableVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * tableVertexCount, GL_STATIC_DRAW, tableVertexData);
+	tableIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * tableIndexCount, GL_STATIC_DRAW, tableIndexes);
+
+	//客厅抽屉
+	drawerVertexData = LoadObjModel("Res/group1/drawerIn.obj", &drawerIndexes, drawerVertexCount, drawerIndexCount);
+	drawerVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * drawerVertexCount, GL_STATIC_DRAW, drawerVertexData);
+	drawerIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * drawerIndexCount, GL_STATIC_DRAW, drawerIndexes);
+
+	//客厅抽屉2
+	drawerVertexData2 = LoadObjModel("Res/group1/drawer.obj", &drawerIndexes2, drawerVertexCount2, drawerIndexCount2);
+	drawerVbo2 = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * drawerVertexCount2, GL_STATIC_DRAW, drawerVertexData2);
+	drawerIbo2 = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * drawerIndexCount2, GL_STATIC_DRAW, drawerIndexes2);
+
+	//客厅 墙上相框--中间单独
+	pVertexData = LoadObjModel("Res/group1/painting1.obj", &pIndexes, pVertexCount, pIndexCount);
+	pVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * pVertexCount, GL_STATIC_DRAW, pVertexData);
+	pIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * pIndexCount, GL_STATIC_DRAW, pIndexes);
+
+	//客厅 墙上相框--其余相框
+	p2VertexData = LoadObjModel("Res/group1/painting2.obj", &p2Indexes, p2VertexCount, p2IndexCount);
+	p2Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * p2VertexCount, GL_STATIC_DRAW, p2VertexData);
+	p2Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * p2IndexCount, GL_STATIC_DRAW, p2Indexes);
+
+	//卧室 床--1 双人床+前方地毯
+	bedVertexData = LoadObjModel("Res/group2/bed1.obj", &bedIndexes, bedVertexCount, bedIndexCount);
+	bedVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * bedVertexCount, GL_STATIC_DRAW, bedVertexData);
+	bedIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * bedIndexCount, GL_STATIC_DRAW, bedIndexes);
+
+	//卧室 床--2 单人床+右侧地毯
+	bed2VertexData = LoadObjModel("Res/group2/bed2.obj", &bed2Indexes, bed2VertexCount, bed2IndexCount);
+	bed2Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * bed2VertexCount, GL_STATIC_DRAW, bed2VertexData);
+	bed2Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * bed2IndexCount, GL_STATIC_DRAW, bed2Indexes);
+
+	//卧室 窗户位置--1 窗帘开启
+	window1VertexData = LoadObjModel("Res/group2/bedRoomCurtainOn.obj", &window1Indexes, window1VertexCount, window1IndexCount);
+	window1Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * window1VertexCount, GL_STATIC_DRAW, window1VertexData);
+	window1Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * window1IndexCount, GL_STATIC_DRAW, window1Indexes);
+
+	//卧室 窗户位置--2 窗帘关闭
+	window2VertexData = LoadObjModel("Res/group2/bedRoomCurtainOff.obj", &window2Indexes, window2VertexCount, window2IndexCount);
+	window2Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * window2VertexCount, GL_STATIC_DRAW, window2VertexData);
+	window2Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * window2IndexCount, GL_STATIC_DRAW, window2Indexes);
+
+	//卧室 窗户位置--3 百叶窗开启
+	window3VertexData = LoadObjModel("Res/group2/bedRoomWindowOn.obj", &window3Indexes, window3VertexCount, window3IndexCount);
+	window3Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * window3VertexCount, GL_STATIC_DRAW, window3VertexData);
+	window3Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * window3IndexCount, GL_STATIC_DRAW, window3Indexes);
+
+	//卧室 窗户位置--4 百叶窗拉上
+	window4VertexData = LoadObjModel("Res/group2/bedRoomWindowOff.obj", &window4Indexes, window4VertexCount, window4IndexCount);
+	window4Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * window4VertexCount, GL_STATIC_DRAW, window4VertexData);
+	window4Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * window4IndexCount, GL_STATIC_DRAW, window4Indexes);
+
+	//卧室 墙上装饰--1
+	decoVertexData = LoadObjModel("Res/group2/bedroomonWall.obj", &decoIndexes, decoVertexCount, decoIndexCount);
+	decoVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * decoVertexCount, GL_STATIC_DRAW, decoVertexData);
+	decoIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * decoIndexCount, GL_STATIC_DRAW, decoIndexes);
+
+	//卧室 墙上装饰2
+	deco2VertexData = LoadObjModel("Res/group2/bedroomonWall2.obj", &deco2Indexes, deco2VertexCount, deco2IndexCount);
+	deco2Vbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * deco2VertexCount, GL_STATIC_DRAW, deco2VertexData);
+	deco2Ibo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * deco2IndexCount, GL_STATIC_DRAW, deco2Indexes);
+
+	//卧室 其他物品
+	bedroomVertexData = LoadObjModel("Res/group2/bedroom.obj", &bedroomIndexes, bedroomVertexCount, bedroomIndexCount);
+	bedroomVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * bedroomVertexCount, GL_STATIC_DRAW, bedroomVertexData);
+	bedroomIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * bedroomIndexCount, GL_STATIC_DRAW, bedroomIndexes);
+
+	//书房物品
+	studyRoomVertexData = LoadObjModel("Res/group3/studyRoom.obj", &studyRoomIndexes, studyRoomVertexCount, studyRoomIndexCount);
+	studyRoomVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * studyRoomVertexCount, GL_STATIC_DRAW, studyRoomVertexData);
+	studyRoomIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * studyRoomIndexCount, GL_STATIC_DRAW, studyRoomIndexes);
+
+	//厨房物品
+	kitchenVertexData = LoadObjModel("Res/group3/kitchen.obj", &kitchenIndexes, kitchenVertexCount, kitchenIndexCount);
+	kitchenVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * kitchenVertexCount, GL_STATIC_DRAW, kitchenVertexData);
+	kitchenIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * kitchenIndexCount, GL_STATIC_DRAW, kitchenIndexes);
+}
+
 //载入纹理
 void loadTexture() {
 	paintings.push_back(CreateTexture("Res/Colors.png"));
