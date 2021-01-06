@@ -1,10 +1,8 @@
 #version 440
 
 //binding的作用：直接在着色器glsl中绑定纹理单元！！！
-layout (binding = 0) uniform sampler2D U_MainTexture; //纹理采样器 通过CPU中roomTexture传入
-layout (binding = 1) uniform sampler2D U_ShadowMap; //通过CPU中shadowMap传入
-
-
+layout (binding = 0) uniform sampler2D livingRoomWallTexture; //客厅纹理采样器
+layout (binding = 1) uniform sampler2D U_ShadowMap;
 
 in vec3 V_Normal; //法线位置
 in vec4 V_WorldPos; //世界坐标，即摆放好了场景
@@ -13,8 +11,6 @@ in vec4 V_LightSpaceFragPos;
 
 uniform vec3 ViewPos;
 uniform int lightOn; 
-
-uniform float sunlight;
 
 layout (location = 0) out vec4 color; //片段着色器要输出的颜色即最终渲染效果
 
@@ -40,8 +36,7 @@ float CalculateShadow()
 
 void main()
 {
-	vec3 lightPos=vec3(sunlight,sunlight,sunlight);
-	//vec3 lightPos=vec3(1.0,1.0,1.0);
+	vec3 lightPos=vec3(1.0,1.0,1.0);
 	vec3 L=lightPos;
 	L=normalize(L);
 	vec3 n=normalize(V_Normal);
@@ -52,7 +47,7 @@ void main()
 	vec4 ambientColor=AmbientLightColor*AmbientMaterial;
 
 	//diffuse
-	vec4 DiffuseLightColor=vec4(2.0,2.0,2.0,1.0);
+	vec4 DiffuseLightColor=vec4(1.0,1.0,1.0,1.0);
 	vec4 DiffuseMaterial=vec4(0.8,0.8,0.8,1.0);
 	vec4 diffuseColor=DiffuseLightColor*DiffuseMaterial*max(0.0,dot(L,n));
 
@@ -67,12 +62,12 @@ void main()
 
 	if(lightOn == 1) //灯打开
 	{
-		color = ambientColor+(diffuseColor+specularColor)*texture2D(U_MainTexture, V_Texcoord);
+		color = ambientColor+(diffuseColor+specularColor)*texture2D(livingRoomWallTexture, V_Texcoord);
 		color = color*vec4(vec3(1.0-CalculateShadow()),1.0);
 	}
 	
 	if(lightOn == 0) //灯关闭
 	{
-		color = ambientColor*texture2D(U_MainTexture, V_Texcoord) * 1.5;
+		color = ambientColor*texture2D(livingRoomWallTexture, V_Texcoord) * 1.5;
 	}
 }

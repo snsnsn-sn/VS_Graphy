@@ -17,15 +17,6 @@ glm::mat4 lightProjectionMatrix;
 glm::mat4 lightViewMatrix;
 
 //  texture and program
-
-//刘涔宇
-GLuint livingRoomWallPosLoc, livingRoomWallTexcoordLoc, livingRoomWallNormalLoc;
-GLuint livingRoomWallMLoc, livingRoomWallVLoc, livingRoomWallPLoc, livingRoomWallNMLoc, livingRoomWallViewPosLocation;
-GLuint livingRoomWallLightVMatrixLoc, livingRoomWallLightPMatrixLoc;
-GLuint livingRoomWallLightOnLoc;
-GLuint livingRoomWallTextureLoc, livingRoomShadowMapLoc;
-//刘涔宇
-
 std::vector<GLuint> paintings;//客厅挂画纹理
 std::vector<GLuint> walls;//客厅墙壁纹理
 std::vector<GLuint> floors;//客厅地板纹理

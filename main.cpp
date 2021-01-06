@@ -168,6 +168,8 @@ void loadTexture() {
 
 void init()
 {
+	//¶ÁÈ¡Ä£ĞÍ=============================================================================
+	readModel();
 	loadTexture();
 
 	cameraPos = glm::vec3(0.0f, 10.0f, 40.0f); //³õÊ¼»¯ÉãÏñ»úµÄÎ»ÖÃ(x,y,z)
@@ -207,57 +209,16 @@ void init()
 	renderLightPMatrixLoc = glGetUniformLocation(renderProgram, "LightProjectionMatrix");
 	renderLightOnLoc = glGetUniformLocation(renderProgram, "lightOn");
 
+	rendersunlight = glGetUniformLocation(renderProgram, "sunlight");//¹âÔ´Î»ÖÃ
+
 	roomTexture = CreateTexture("Res/Colors.png");										//ÔÚmisc.cppÖĞ
-	//roomTexture = CreateTexture("Res/Floor4.png");
+	
 	depthPosLoc = 0;
 	depthTexcoordLoc = 1;
 	depthNormalLoc = 2;
 	depthMLoc = glGetUniformLocation(depthProgram, "M");
 	depthVLoc = glGetUniformLocation(depthProgram, "V");
 	depthPLoc = glGetUniformLocation(depthProgram, "P");
-
-	//Õû¸ö·¿¼ä
-	roomVertexData2 = LoadObjModel("Res/room.obj", &roomIndexes2, roomVertexCount2, roomIndexCount2);
-	roomVbo2 = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * roomVertexCount2, GL_STATIC_DRAW, roomVertexData2);
-	roomIbo2 = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount2, GL_STATIC_DRAW, roomIndexes2);
-
-	//¿ÍÌüÇ½±ÚµÄVBOºÍVIO£¬ÕâÀïÖ»ÊÇ³õÊ¼»¯
-	wall_yellow = LoadObjModel("Res/livingRoomWall_Yellow.obj", &wallIndexes, wallVertexCount, wallIndexCount);
-	wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wall_yellow);
-	//printf("³õÊ¼Ç½±ÚÒ»\n");
-	wallIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * wallIndexCount, GL_STATIC_DRAW, wallIndexes);
-
-	//¿ÍÌüÄÚ²¿
-	roomVertexData = LoadObjModel("Res/livingRoom.obj", &roomIndexes, roomVertexCount, roomIndexCount);
-	roomVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * roomVertexCount, GL_STATIC_DRAW, roomVertexData);
-	roomIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount, GL_STATIC_DRAW, roomIndexes);
-
-	//ÎÔÊÒÇ½±Ú
-	VertexData* wall_blue1 = LoadObjModel("Res/roomWall_Blue.obj", &wallIndexes2, wallVertexCount2, wallIndexCount2);
-	wallVertexData2 = wall_blue1;//³õÊ¼Êı¾İ
-	wallVbo2 = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount2, GL_STATIC_DRAW, wall_blue1);//³õÊ¼ÑÕÉ«
-	wallIbo2 = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * wallIndexCount2, GL_STATIC_DRAW, wallIndexes2);
-
-	//´²µÄVBO£¬VIO£¬Õâ¸öinitÖ»ÊÇÖ´ĞĞÒ»´Î£¬¸Ä±äÔÚ°´¼üº¯ÊıÄÇÀï
-	bedVertexData = LoadObjModel("Res/bed.obj", &bedIndexes, bedVertexCount, bedIndexCount);
-	bedVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * bedVertexCount, GL_STATIC_DRAW, bedVertexData);
-	bedIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * bedIndexCount, GL_STATIC_DRAW, bedIndexes);
-	//printf("³õÊ¼´²Ò»\n");
-
-	//´°Á±
-	curtainVertexData = LoadObjModel("Res/curtain.obj", &curtainIndexes, curtainVertexCount, curtainIndexCount);
-	curtainVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * curtainVertexCount, GL_STATIC_DRAW, curtainVertexData);
-	curtainIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * curtainIndexCount, GL_STATIC_DRAW, curtainIndexes);
-
-	//µØ°å
-	floorVertexData = LoadObjModel("Res/floor.obj", &floorIndexes, floorVertexCount, floorIndexCount);
-	floorVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * floorVertexCount, GL_STATIC_DRAW, floorVertexData);
-	floorIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * floorIndexCount, GL_STATIC_DRAW, floorIndexes);
-
-	//×°ÊÎ
-	decoVertexData = LoadObjModel("Res/onWall.obj", &decoIndexes, decoVertexCount, decoIndexCount);
-	decoVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * decoVertexCount, GL_STATIC_DRAW, decoVertexData);
-	decoIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * decoIndexCount, GL_STATIC_DRAW, decoIndexes);
 
 	glEnable(GL_DEPTH_TEST);
 	//ÒªÔÚÃ¿´ÎäÖÈ¾µü´úÖ®Ç°Çå³ıÉî¶È»º´æglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -303,7 +264,7 @@ void keyFunc(GLubyte key, int x, int y)          // ¼üÅÌ½»»¥º¯Êı£¬   wsÒÆ¶¯ÉãÏñ»
 
 	switch (key)
 	{
-		//ÉãÏñ»úÒÆ¶¯
+		//ÉãÏñ»úÒÆ¶¯------------------------------------------------------
 	case 'w': case 'W'://Ç°ÒÆ
 		cameraPos += cameraSpeed * cameraDirection;
 		cameraTarget += cameraSpeed * cameraDirection;
@@ -328,105 +289,58 @@ void keyFunc(GLubyte key, int x, int y)          // ¼üÅÌ½»»¥º¯Êı£¬   wsÒÆ¶¯ÉãÏñ»
 		cameraPos -= cameraSpeed * up;
 		cameraTarget -= cameraSpeed * up;
 		break;
-	case 'c': case 'C'://¿ÍÌüÇ½±ÚÑÕÉ«ÇĞ»»
-		//printf("ÇĞ»»¿ÍÌüÇ½±Ú\n");
-		changeWall++;
-		changeWall = changeWall % 5;
-		switch (changeWall) {
-		case 0:
-			wall_yellow = LoadObjModel("Res/livingRoomWall_Yellow.obj", &wallIndexes, wallVertexCount, wallIndexCount);
-			wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wall_yellow);
-			//printf("ÇĞ»»Ç½±ÚÒ»\n");
-			break;
-		case 1:
-			wall_green = LoadObjModel("Res/livingRoomWall_Green.obj", &wallIndexes, wallVertexCount, wallIndexCount);
-			wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wall_green);
-			//printf("ÇĞ»»Ç½±Ú¶ş\n");
-			break;
-		case 2:
-			wall_white = LoadObjModel("Res/livingRoomWall_White.obj", &wallIndexes, wallVertexCount, wallIndexCount);
-			wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wall_white);
-			//printf("ÇĞ»»Ç½±ÚÈı\n");
-			break;
-		case 3:
-			wall_orange = LoadObjModel("Res/livingRoomWall_Orange.obj", &wallIndexes, wallVertexCount, wallIndexCount);
-			wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wall_orange);
-			//printf("ÇĞ»»Ç½±ÚËÄ\n");
-			break;
-		case 4:
-			wall_blue = LoadObjModel("Res/livingRoomWall_Blue.obj", &wallIndexes, wallVertexCount, wallIndexCount);
-			wallVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * wallVertexCount, GL_STATIC_DRAW, wall_blue);
-			//printf("ÇĞ»»Ç½±ÚÎå\n");
-			break;
+	case 'k': case 'K':
+		sunlight -= 0.5;
+		//printf("%f", sunlight);
+		if (sunlight <= 0) {
+			sunlight = 0.5;
 		}
-		wallIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * wallIndexCount, GL_STATIC_DRAW, wallIndexes);
-		//printf("changeWall=%d", changeWall);
 		break;
-	case 'v':case 'V'://´²µÄÇĞ»»
-		//printf("ÇĞ»»´²\n");
-		changeBed++;
-		changeBed = changeBed % 2;
-		switch (changeBed) {
-		case 0:
-			bedVertexData = LoadObjModel("Res/bed.obj", &bedIndexes, bedVertexCount, bedIndexCount);
-			bedVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * bedVertexCount, GL_STATIC_DRAW, bedVertexData);
-			bedIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * bedIndexCount, GL_STATIC_DRAW, bedIndexes);
-			//printf("´²Ò»\n");
-			break;
-		case 1:
-			bedVertexData = LoadObjModel("Res/bed2.obj", &bedIndexes, bedVertexCount, bedIndexCount);
-			bedVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * bedVertexCount, GL_STATIC_DRAW, bedVertexData);
-			bedIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * bedIndexCount, GL_STATIC_DRAW, bedIndexes);
-			//printf("´²¶ş\n");
-			break;
-		}
-		//printf("changeBed=%d", changeBed);	
+	case 'j': case 'J':
+		sunlight += 0.5;
+		//if (sunlight >= 50.0) sunlight = 50.0;
 		break;
-	case 'b':case 'B'://´°Á±µÄÇĞ»»
-		//printf("ÇĞ»»´°Á±\n");
-		changeCurtain++;
-		changeCurtain = changeCurtain % 2;
-		switch (changeCurtain) {
-		case 0:
-			curtainVertexData = LoadObjModel("Res/curtain.obj", &curtainIndexes, curtainVertexCount, curtainIndexCount);
-			curtainVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * curtainVertexCount, GL_STATIC_DRAW, curtainVertexData);
-			curtainIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * curtainIndexCount, GL_STATIC_DRAW, curtainIndexes);
-			printf("´°Á±1...\n");
-			break;
-		case 1:
-			curtainVertexData = LoadObjModel("Res/window.obj", &curtainIndexes, curtainVertexCount, curtainIndexCount);
-			curtainVbo = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * curtainVertexCount, GL_STATIC_DRAW, curtainVertexData);
-			curtainIbo = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * curtainIndexCount, GL_STATIC_DRAW, curtainIndexes);
-			printf("´°Á±2...\n");
-			break;
-		}
-		//printf("changeCurtain=%d", changeCurtain);
-		
+	case 'h':case 'H':
+		sunlight = 50.0;
 		break;
+		//ÎïÆ·ÑùÊ½ÇĞ»»------------------------------------------------------
+	case '1'://ÇĞ»»ÎÔÊÒ´²ÑùÊ½
+		bed = (bed + 1) % 2;
+		break;
+	case '2'://ÇĞ»»ÎÔÊÒÕıÇ½×°ÊÎ
+		wallDeco = (wallDeco + 1) % 2;
+		break;
+	case '3'://ÇĞ»»ÎÔÊÒ´°»§ÑùÊ½
+		window = (window + 1) % 4;
+		break;
+	case '4'://ÇĞ»»³éÌëÑùÊ½
+		drawer = (drawer + 1) % 2;
+		break;
+	case '0'://ÇĞ»»¿ÍÌüÇ½±ÚÎÆÀí
+		wallTexture++;
+		wallTexture %= wallsSize;
+		break;
+	case '9'://ÇĞ»»¿ÍÌüµØ°åÎÆÀí
+		floorTexture++;
+		floorTexture %= floorsSize;
+		break;
+	case '8'://ÇĞ»»¿ÍÌüÖĞ¼ä¹Ò»­ÎÆÀí
+		paintTexture++;
+		paintTexture %= paintingsSize;
+		break;
+	case '7'://ÇĞ»»¿ÍÌüÁ½±ßÎÆÀí
+		otherPaintTexture++;
+		otherPaintTexture %= OtherPaintingsSize;
+		break;
+		//¿ª¹ØµÆ------------------------------------------------------------
 	case 'l': case 'L':
 		lightOn = lightOn == 1 ? 0 : 1;
 		break;
-	case 't':case 'T':
-		changeStyle++;
-		changeStyle = changeStyle % 3;
-		//printf("%d\n", changeStyle);
-		switch (changeStyle) {
-		case 0:
-			//printf("room1...\n");
-			roomVertexData2 = LoadObjModel("Res/room.obj", &roomIndexes2, roomVertexCount2, roomIndexCount2);
-			roomVbo2 = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * roomVertexCount2, GL_STATIC_DRAW, roomVertexData2);
-			roomIbo2 = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount2, GL_STATIC_DRAW, roomIndexes2);
-			break;
-		case 1:
-			//printf("room2...\n");
-			roomVertexData2 = LoadObjModel("Res/room2.obj", &roomIndexes2, roomVertexCount2, roomIndexCount2);
-			roomVbo2 = CreateBufferObject(GL_ARRAY_BUFFER, sizeof(VertexData) * roomVertexCount2, GL_STATIC_DRAW, roomVertexData2);
-			roomIbo2 = CreateBufferObject(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * roomIndexCount2, GL_STATIC_DRAW, roomIndexes2);
-			break;
-		}
-		break;
 	}
+	//viewMatrix = glm::lookAt(cameraPos, cameraCenter, glm::vec3(0.0f, 1.0f, 0.0f));
 	viewMatrix = glm::lookAt(cameraPos, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+	lightViewMatrix = glm::lookAt(glm::vec3(150.0f, 150.0f, 100.0f), glm::vec3(0.0f, 0.0f, -50.0f) + glm::vec3(sunlight, sunlight, 0), glm::vec3(0.0f, 0.0f, -1.0f));
+
 }
 
 void MouseFunc(int button, int state, int x, int y)      // Êó±êº¯Êı£¬  µ¥»÷ÓÒ¼üÔÊĞíÒÆ¶¯ÉãÏñÍ·£¬ ËÉ¿ªÓÒ¼ü¼´²»ÔÊĞíÒÆ¶¯
@@ -503,28 +417,68 @@ int main(int argc, char** argv)
 	glutMouseFunc(MouseFunc);
 	glutMotionFunc(MotionFunc);
 
-	printf("=============¼üÅÌ½»»¥=============\n");
-	printf("ÊäÈë w¡¢s¡¢d¡¢a Ç°ºó×óÓÒÒÆ¶¯...\n");
-	printf("ÊäÈë ¿Õ¸ñ ÏòÉÏÒÆ¶¯...\n");
-	printf("ÊäÈë x ÏòÏÂÒÆ¶¯...\n");
-	printf("ÊäÈë c ÇĞ»»Ç½±Ú¿ÍÌü...\n");
-	printf("ÊäÈë v ÇĞ»»´²...\n");
-	printf("ÊäÈë l ¿ª¹ØµÆ...\n");
-	printf("ÊäÈë b ÇĞ»»´°Á±...\n");
-	printf("ÊäÈë t ÇĞ»»Ä£ĞÍ...\n");
-	printf("=============Êó±ê½»»¥=============\n");
-	printf("ÍÏ¶¯Êó±êÓÒ¼üÊÓ½ÇÇĞ»»...\n");
-	printf("Êó±ê¹öÂÖÊÓÒ°·Å´óËõĞ¡...\n");
+	printf("===============ÂşÓÎ¹¦ÄÜ================\n");
+	printf("ÊäÈëw¡¢s¡¢d¡¢aÇ°ºó×óÓÒÒÆ¶¯...\n");
+	printf("ÊäÈë¿Õ¸ñÏòÉÏÒÆ¶¯...\n");
+	printf("ÊäÈëxÏòÏÂÒÆ¶¯...\n");
+	printf("Í¨¹ı¹öÂÖ¿ØÖÆ·Å´óËõĞ¡\n");
+	printf("===============ÇĞ»»ĞÎ×´================\n");
+	printf("ÊäÈë1ÇĞ»»´²...\n");
+	printf("ÊäÈë2ÇĞ»»ÎÔÊÒÇ½×°ÊÎ...\n");
+	printf("ÊäÈë3ÇĞ»»ÎÔÊÒ´°»§ÑùÊ½...\n");
+	printf("ÊäÈë4ÇĞ»»³éÌëÑùÊ½...\n");
+	printf("===============ÇĞ»»ÎÆÀí================\n");
+	printf("ÊäÈë0ÇĞ»»¿ÍÌüÇ½±ÚÑùÊ½...\n");
+	printf("ÊäÈë9ÇĞ»»¿ÍÌüµØ°åÑùÊ½...\n");
+	printf("ÊäÈë8ÇĞ»»¿ÍÌüÖĞ¼ä±Ú»­ÑùÊ½...\n");
+	printf("ÊäÈë7ÇĞ»»¿ÍÌüÁ½±ß±Ú»­ÑùÊ½...\n");
+	printf("================Ñô¹â¿ØÖÆ===============\n");
+	printf("ÊäÈëL¿ª¹ØµÆ...\n");
+	printf("ÊäÈëkÌ«ÑôÂäÉ½...\n");
+	printf("ÊäÈëjÌ«ÑôÉıÆğ...\n");
+	printf("ÊäÈëhÖØÖÃÑô¹â...\n");
 	glutMainLoop();
 
 	return 0;
 }
 
+/*
+* @·½·¨£º»æÖÆÒ»¸öÎïÌå
+* @ËµÃ÷£º´«Èë³õÊ¼·½·¨ÖĞÉú³ÉµÄvbo¡¢ibo¡¢indexcountÀ´»æÖÆµ¥¸öÎïÌå
+*/
+void drawOne(GLuint vbo, GLuint ibo, int indexCount) {
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//¸æËßopengl¸ÃÈçºÎ½âÎö¶¥µãÊı¾İ£¡£¡£¡ µÚÒ»¸ö²ÎÊıÊÇvsÖĞlocationµÄÖµ
+	glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
+	glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void drawOneSample(GLuint vbo, GLuint ibo, int indexCount) {
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//¸æËßopengl¸ÃÈçºÎ½âÎö¶¥µãÊı¾İ£¡£¡£¡ µÚÒ»¸ö²ÎÊıÊÇvsÖĞlocationµÄÖµ
+	glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
+	glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 void DrawRoom()
 {
+	//--------------------------------------------------------------------------------------------------------------
+	//×¼±¸»æÖÆ
+	//--------------------------------------------------------------------------------------------------------------
 	modelMatrix = glm::scale(2.0f, 2.0f, 2.0f);
-	normalMatrix = glm::inverseTranspose(modelMatrix);
-
+	normalMatrix = glm::inverseTranspose(modelMatrix); //Ä£ĞÍ¾ØÕó£¬¿ØÖÆÆ½ÒÆ¡¢Ğı×ª¡¢Ëõ·Å
 	/**
 	*void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value)
 	*Í¨¹ıÒ»ÖÂ±äÁ¿£¨uniformĞŞÊÎµÄ±äÁ¿£©ÒıÓÃ½«Ò»ÖÂ±äÁ¿Öµ´«ÈëäÖÈ¾¹ÜÏß¡£
@@ -533,238 +487,159 @@ void DrawRoom()
 	*transpose : Ö¸Ã÷¾ØÕóÊÇÁĞÓÅÏÈ(column major)¾ØÕó£¨GL_FALSE£©»¹ÊÇĞĞÓÅÏÈ(row major)¾ØÕó£¨GL_TRUE£©¡£
 	*value : Ö¸ÏòÓÉcount¸öÔªËØµÄÊı×éµÄÖ¸Õë
 	*/
-	//ÔÚSimple.vsÖĞµÄPosÎ»ÖÃÏòÁ¿¡¢Normal·¨ÏòÁ¿,TexcoordÎÆÀí×ø±êÏòÁ¿
+
+	//¸üĞÂuniformÖ®Ç°Äã±ØĞëÏÈÊ¹ÓÃ³ÌĞò£¨µ÷ÓÃglUseProgram)£¬ÒòÎªËüÊÇÔÚµ±Ç°¼¤»îµÄ×ÅÉ«Æ÷³ÌĞòÖĞÉèÖÃuniformµÄ¡£
 	glUseProgram(renderProgram);
+	//glUniformMatrix4fvÏë×ÅÉ«Æ÷³ÌĞò´«Öµ£¬µÚÒ»¸ö²ÎÊıÊÇÎ»ÖÃ£¬2¡¢3²»±ä£¬µÚËÄ¸ö¾ÍÊÇÄãÒª´«µÄ¾ØÕó
 	glUniformMatrix4fv(renderMLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));             // Ïògpu programÖĞ´«Öµ
-	glUniformMatrix4fv(renderVLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));			//ÕâĞ©²ÎÊı¶¼ÔÚ53ĞĞ»ñµÃÎ»ÖÃ¾ä±ú£¬È»ºóÔÚÕâÀï¸³Öµ
+	glUniformMatrix4fv(renderVLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));			//ÕâĞ©²ÎÊı¶¼ÔÚ47ĞĞ¸³Öµ
 	projectionMatrix = glm::perspective(fov, 800.0f / 600.0f, 0.1f, 800.0f);//Í¶Ó°¾ØÕó£¬Òò¹öÂÖĞŞ¸ÄÁËfov²ÎÊı£¬ËùÒÔĞèÒªÊµÊ±´«µİ¾ØÕó¸ø×ÅÉ«Æ÷³ÌĞò
 	glUniformMatrix4fv(renderPLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 	glUniformMatrix4fv(renderNMLoc, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 	glUniform3fv(renderViewPosLocation, 1, glm::value_ptr(cameraPos));
+	//glUniform1iÉèÖÃÃ¿¸ö²ÉÑùÆ÷µÄ·½Ê½µ¥´¿¸æËßOpenGLÃ¿¸ö×ÅÉ«Æ÷²ÉÑùÆ÷ÊôÓÚÄÄ¸öÎÆÀíµ¥Ôª¡£ÎÆÀíµ¥Ôª×Ü¹²ÓĞ16¸ö
 	glUniformMatrix4fv(renderLightPMatrixLoc, 1, GL_FALSE, glm::value_ptr(lightProjectionMatrix));
 	glUniformMatrix4fv(renderLightVMatrixLoc, 1, GL_FALSE, glm::value_ptr(lightViewMatrix));
 	glUniform1i(renderLightOnLoc, lightOn);
 
-	glBindTextureUnit(0, roomTexture);      // °ó¶¨ÎÆÀí£¬´«ÈëLight.fsµÄbinding = 0 £¬1
-	glBindTextureUnit(1, shadowMap);//Éî¶È»º´æ´æ½øÈ¥¡£ÓÃÀ´ÅĞ¶ÏÊÇ·ñÔÚÒõÓ°ÖĞ
+	//¹âÔ´Î»ÖÃ´«Öµ
+	glUniform1f(rendersunlight, sunlight);
 
-	if (changeStyle == 2) {
-		//»æÖÆ¿ÍÌü===============================================================
-		glEnableVertexAttribArray(renderPosLoc);//light.fs Î»ÖÃÊôĞÔ
-		glEnableVertexAttribArray(renderTexcoordLoc);//light.fs ÎÆÀíÊôĞÔ
-		glEnableVertexAttribArray(renderNormalLoc);//light.fs ·¨ÏòÁ¿ÊôĞÔ
+	//°ó¶¨ÎÆÀíµ¥Ôª
+	glBindTextureUnit(0, roomTexture);      // °ó¶¨ÎÆÀíµ¥Ôª0
+	glBindTextureUnit(1, shadowMap);
 
-		//¿ªÊ¼»æÖÆ¿ÍÌüÄÚ²¿------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, roomVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+	glEnableVertexAttribArray(renderPosLoc);
+	glEnableVertexAttribArray(renderTexcoordLoc);
+	glEnableVertexAttribArray(renderNormalLoc);
+	//--------------------------------------------------------------------------------------------------------------
+	//¿ªÊ¼»æÖÆ
+	//--------------------------------------------------------------------------------------------------------------
+	//µØ°å
+	glBindTextureUnit(0, floors[floorTexture]);      // °ó¶¨ÎÆÀíµ¥Ôª0
+	drawOne(floorVbo, floorIbo, floorIndexCount);
+	glBindTextureUnit(0, roomTexture);
+	//Ç½±Ú
+	glBindTextureUnit(0, walls[wallTexture]);      // °ó¶¨ÎÆÀíµ¥Ôª0
+	drawOne(wallVbo, wallIbo, wallIndexCount);
+	glBindTextureUnit(0, roomTexture);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, roomIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//¿ªÊ¼»æÖÆ¿ÍÌüÇ½±Ú------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, wallVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+	//×À×Ó
+	drawOne(tableVbo, tableIbo, tableIndexCount);
+	//³ø·¿ÎïÆ·
+	drawOne(kitchenVbo, kitchenIbo, kitchenIndexCount);
+	//Êé·¿ÎïÆ·
+	drawOne(studyRoomVbo, studyRoomIbo, studyRoomIndexCount);
+	//¿ÍÌüÎïÆ·
+	drawOne(roomVbo, roomIbo, roomIndexCount);
+	//¿ÍÌü Ç½±Ú--»­1
+	glBindTextureUnit(0, paintings[paintTexture]);
+	drawOne(pVbo, pIbo, pIndexCount);
+	glBindTextureUnit(0, roomTexture);
+	//¿ÍÌü Ç½±Ú--»­2
+	glBindTextureUnit(0, otherPaintings[otherPaintTexture]);
+	drawOne(p2Vbo, p2Ibo, p2IndexCount);
+	glBindTextureUnit(0, roomTexture);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wallIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, wallIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆ´°Á±---------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, curtainVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+	//ÎÔÊÒ ´²
+	if (bed == 0)
+		drawOne(bedVbo, bedIbo, bedIndexCount);//´²1
+	else
+		drawOne(bed2Vbo, bed2Ibo, bed2IndexCount);//´²2
+	//³éÌë
+	if (drawer == 0)
+		drawOne(drawerVbo, drawerIbo, drawerIndexCount);//³éÌë1
+	else
+		drawOne(drawerVbo2, drawerIbo2, drawerIndexCount2);//³éÌë2
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, curtainIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, curtainIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆµØ°å---------------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, floorVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, floorIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆ×°ÊÎ---------------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, decoVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, decoIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, decoIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆ´²
-		glBindBuffer(GL_ARRAY_BUFFER, bedVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bedIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, bedIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆÎÔÊÒÇ½±Ú
-		glBindBuffer(GL_ARRAY_BUFFER, wallVbo2);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wallIbo2);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, wallIndexCount2, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
-	else {
-		glBindBuffer(GL_ARRAY_BUFFER, roomVbo2);
-		glEnableVertexAttribArray(renderPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(renderTexcoordLoc);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(renderNormalLoc);
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo2);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, roomIndexCount2, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//ÎÔÊÒ ×óÇ½--´°»§
+	switch (window) {
+	case(0)://ÑùÊ½1 ´°Á±¹Ø±Õ
+		drawOne(window1Vbo, window1Ibo, window1IndexCount); break;
+	case(1)://ÑùÊ½2 ´°Á±´ò¿ª
+		drawOne(window2Vbo, window2Ibo, window2IndexCount); break;
+	case(2)://ÑùÊ½3 °ÙÒ¶´°À­ÏÂ
+		drawOne(window3Vbo, window3Ibo, window3IndexCount); break;
+	case(3)://ÑùÊ½4 °ÙÒ¶´°À­ÉÏ
+		drawOne(window4Vbo, window4Ibo, window4IndexCount); break;
 	}
 
+	//ÎÔÊÒ ÕıÇ½
+	if (wallDeco == 0)
+		drawOne(decoVbo, decoIbo, decoIndexCount);// ×°ÊÎ1 ¿Õµ÷¡¢»­¿ò
+	else
+		drawOne(deco2Vbo, deco2Ibo, deco2IndexCount); //×°ÊÎ2 Êé¼®
+
+	//ÎÔÊÒ ÆäËûÎïÆ· ÍûÔ¶¾µ Ì¨µÆ ´²Í·¹ñ ¾µ×Ó
+	drawOne(bedroomVbo, bedroomIbo, bedroomIndexCount);
 	glUseProgram(0);
+	//--------------------------------------------------------------------------------------------------------------
+	//»æÖÆ½áÊø
+	//--------------------------------------------------------------------------------------------------------------
 }
 
 void DrawRoomSample()
 {
 	modelMatrix = glm::scale(2.0f, 2.0f, 2.0f);
 	glUseProgram(depthProgram);
-	//uniformµÄÎ»ÖÃ£¬ĞèÒª¼ÓÔØÊı¾İµÄÊı×éÔªËØµÄÊıÁ¿»òÕßĞèÒªĞŞ¸ÄµÄ¾ØÕóµÄÊıÁ¿£¬Ö¸Ã÷¾ØÕóÊÇÁĞÓÅÏÈ(column major)¾ØÕó£¨GL_FALSE£©»¹ÊÇĞĞÓÅÏÈ(row major)¾ØÕó£¨GL_TRUE£©Ö¸ÏòÓÉcount¸öÔªËØµÄÊı×éµÄÖ¸Õë¡£
 	glUniformMatrix4fv(depthMLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glUniformMatrix4fv(depthVLoc, 1, GL_FALSE, glm::value_ptr(lightViewMatrix));
 	glUniformMatrix4fv(depthPLoc, 1, GL_FALSE, glm::value_ptr(lightProjectionMatrix));
 
-	if (changeStyle == 2) {
-		//¿ªÊ¼»æÖÆ¿ÍÌüÄÚ²¿------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, roomVbo);
-		glEnableVertexAttribArray(depthPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(depthTexcoordLoc);
-		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
-		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+	glEnableVertexAttribArray(depthPosLoc);
+	glEnableVertexAttribArray(depthTexcoordLoc);
+	glEnableVertexAttribArray(depthNormalLoc);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, roomIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//¿ªÊ¼»æÖÆ¿ÍÌüÇ½±Ú------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, wallVbo);
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+	//--------------------------------------------------------------------------------------------------------------
+	//¿ªÊ¼»æÖÆ
+	//--------------------------------------------------------------------------------------------------------------
+	//×À×Ó
+	drawOneSample(tableVbo, tableIbo, tableIndexCount);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wallIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, wallIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆ´°Á±---------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, curtainVbo);
-		glEnableVertexAttribArray(depthPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(depthTexcoordLoc);
-		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
-		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
+	//µØ°å
+	drawOneSample(floorVbo, floorIbo, floorIndexCount);
+	//Ç½±Ú
+	drawOneSample(wallVbo, wallIbo, wallIndexCount);
+	//³ø·¿ÎïÆ·
+	drawOneSample(kitchenVbo, kitchenIbo, kitchenIndexCount);
+	//Êé·¿ÎïÆ·
+	drawOneSample(studyRoomVbo, studyRoomIbo, studyRoomIndexCount);
+	//¿ÍÌüÎïÆ·
+	drawOne(roomVbo, roomIbo, roomIndexCount);
+	//¿ÍÌü Ç½±Ú--»­1
+	drawOneSample(pVbo, pIbo, pIndexCount);
+	//¿ÍÌü Ç½±Ú--»­2
+	drawOneSample(p2Vbo, p2Ibo, p2IndexCount);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, curtainIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, curtainIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆµØ°å---------------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, floorVbo);
-		glEnableVertexAttribArray(depthPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(depthTexcoordLoc);
-		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
-		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, floorIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆ×°ÊÎ---------------------------------------------------------------------------------------------------------
-		glBindBuffer(GL_ARRAY_BUFFER, decoVbo);
-		glEnableVertexAttribArray(depthPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(depthTexcoordLoc);
-		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
-		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, decoIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, decoIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆ´²
-		glBindBuffer(GL_ARRAY_BUFFER, bedVbo);
-		glEnableVertexAttribArray(depthPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(depthTexcoordLoc);
-		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
-		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bedIbo);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, bedIndexCount, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//»æÖÆÎÔÊÒÇ½±Ú
-		glBindBuffer(GL_ARRAY_BUFFER, wallVbo2);
-		glEnableVertexAttribArray(depthPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(depthPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(depthTexcoordLoc);
-		glVertexAttribPointer(depthTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(depthNormalLoc);
-		glVertexAttribPointer(depthNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wallIbo2);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, wallIndexCount2, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
-	else {
-		glBindBuffer(GL_ARRAY_BUFFER, roomVbo2);
-		glEnableVertexAttribArray(renderPosLoc);                 //  ÀûÓÃvbo Ïògpu programÖĞ´«Öµ
-		glVertexAttribPointer(renderPosLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)0);
-		glEnableVertexAttribArray(renderTexcoordLoc);
-		glVertexAttribPointer(renderTexcoordLoc, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 3));
-		glEnableVertexAttribArray(renderNormalLoc);
-		glVertexAttribPointer(renderNormalLoc, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)(sizeof(float) * 5));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, roomIbo2);        // ÀûÓÃiboÖĞµÄindex»æÖÆÍ¼ĞÎ
-		glDrawElements(GL_TRIANGLES, roomIndexCount2, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//ÎÔÊÒ ´²
+	if (bed == 0)
+		drawOneSample(bedVbo, bedIbo, bedIndexCount);//´²1
+	else
+		drawOneSample(bed2Vbo, bed2Ibo, bed2IndexCount);//´²2
+	//³éÌë
+	if (drawer == 0)
+		drawOneSample(drawerVbo, drawerIbo, drawerIndexCount);//³éÌë1
+	else
+		drawOneSample(drawerVbo2, drawerIbo2, drawerIndexCount2);//³éÌë2
+	//ÎÔÊÒ ×óÇ½--´°»§
+	switch (window) {
+	case(0)://ÑùÊ½1 ´°Á±¹Ø±Õ
+		drawOneSample(window1Vbo, window1Ibo, window1IndexCount); break;
+	case(1)://ÑùÊ½2 ´°Á±´ò¿ª
+		drawOneSample(window2Vbo, window2Ibo, window2IndexCount); break;
+	case(2)://ÑùÊ½3 °ÙÒ¶´°À­ÏÂ
+		drawOneSample(window3Vbo, window3Ibo, window3IndexCount); break;
+	case(3)://ÑùÊ½4 °ÙÒ¶´°À­ÉÏ
+		drawOneSample(window4Vbo, window4Ibo, window4IndexCount); break;
 	}
 
-	/**
-	* ÎªÁËÌáÉıĞÔÄÜ£¬½ÚÊ¡gpu×ÊÔ´µÄºÄÓÃ£¬¿ÉÒÔÊ¹ÓÃ±³ÃæÌŞ³ı¹¦ÄÜ
-	//ÆôÓÃ±³ÃæÌŞ³ı¹¦ÄÜ	
-	glEnable(GL_CULL_FACE);
-	//ÌŞ³ıµÄÃæÎª±³Ãæ
-	glCullFace(GL_BACK);
-	//¶¥µãµÄ»æÖÆË³ĞòÎªË³Ê±Õë
-	glFrontFace(GL_CW);
-	*/
+	//ÎÔÊÒ ÕıÇ½
+	if (wallDeco == 0)
+		drawOneSample(decoVbo, decoIbo, decoIndexCount);// ×°ÊÎ1 ¿Õµ÷¡¢»­¿ò
+	else
+		drawOneSample(deco2Vbo, deco2Ibo, deco2IndexCount); //×°ÊÎ2 Êé¼®
+
+	//ÎÔÊÒ ÆäËûÎïÆ· ÍûÔ¶¾µ Ì¨µÆ ´²Í·¹ñ ¾µ×Ó
+	drawOneSample(bedroomVbo, bedroomIbo, bedroomIndexCount);
 	glUseProgram(0);
 }
