@@ -14,6 +14,20 @@ glm::mat4 normalMatrix;
 glm::mat4 lightProjectionMatrix;
 glm::mat4 lightViewMatrix;
 
+//墙壁、地板、壁画等纹理切换
+std::vector<GLuint> paintings;//客厅挂画纹理
+std::vector<GLuint> walls;//客厅墙壁纹理
+std::vector<GLuint> floors;//客厅地板纹理
+std::vector<GLuint> otherPaintings;//客厅两边挂画纹理
+int floorsSize;//vector的长度
+int wallsSize;
+int paintingsSize;
+int OtherPaintingsSize;
+GLuint floorTexture = 0;//vector的第几个纹理
+GLuint wallTexture = 0;
+GLuint paintTexture = 0;
+GLuint otherPaintTexture = 0;
+
 //  texture and program
 GLuint roomTexture, shadowMap;
 GLuint renderProgram, depthProgram;

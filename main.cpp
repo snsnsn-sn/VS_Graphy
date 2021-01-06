@@ -28,8 +28,42 @@ int window = 0;//卧室窗户样式
 
 int lightOn = 1;   // 是否开启光照
 
+//载入纹理
+void loadTexture() {
+	paintings.push_back(CreateTexture("Res/Colors.png"));
+	paintings.push_back(CreateTexture("Res/paintings/paint1.png"));
+	paintings.push_back(CreateTexture("Res/paintings/paint2.png"));
+	paintings.push_back(CreateTexture("Res/paintings/paint3.png"));
+	paintings.push_back(CreateTexture("Res/paintings/paint4.png"));
+	paintingsSize = paintings.size();
+
+	otherPaintings.push_back(CreateTexture("Res/Colors.png"));
+	otherPaintings.push_back(CreateTexture("Res/paintings/paint1.png"));
+	otherPaintings.push_back(CreateTexture("Res/paintings/paint2.png"));
+	otherPaintings.push_back(CreateTexture("Res/paintings/paint3.png"));
+	otherPaintings.push_back(CreateTexture("Res/paintings/paint4.png"));
+	OtherPaintingsSize = otherPaintings.size();
+
+	walls.push_back(CreateTexture("Res/Colors.png"));
+	walls.push_back(CreateTexture("Res/walls/wall1.png"));
+	walls.push_back(CreateTexture("Res/walls/wall2.png"));
+	walls.push_back(CreateTexture("Res/walls/wall3.png"));
+	walls.push_back(CreateTexture("Res/walls/wall4.png"));
+	wallsSize = walls.size();
+
+	floors.push_back(CreateTexture("Res/Colors.png"));
+	floors.push_back(CreateTexture("Res/floors/Floor1.png"));
+	floors.push_back(CreateTexture("Res/floors/Floor2.png"));
+	floors.push_back(CreateTexture("Res/floors/Floor3.png"));
+	floors.push_back(CreateTexture("Res/floors/Floor4.png"));
+	floors.push_back(CreateTexture("Res/floors/Floor5.png"));
+	floorsSize = floors.size();
+}
+
 void init()
 {
+	loadTexture();
+
 	cameraPos = glm::vec3(0.0f, 10.0f, 40.0f); //初始化摄像机的位置(x,y,z)
 	cameraTarget = glm::vec3(0.0f, 10.0f, 0.0f);//摄像机朝向
 	up = glm::vec3(0.0f, 1.0f, 0.0f);//定义上向量 用于叉乘
