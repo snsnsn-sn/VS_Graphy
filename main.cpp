@@ -337,10 +337,8 @@ void keyFunc(GLubyte key, int x, int y)          // ¼üÅÌ½»»¥º¯Êı£¬   wsÒÆ¶¯ÉãÏñ»
 		lightOn = lightOn == 1 ? 0 : 1;
 		break;
 	}
-	//viewMatrix = glm::lookAt(cameraPos, cameraCenter, glm::vec3(0.0f, 1.0f, 0.0f));
-	viewMatrix = glm::lookAt(cameraPos, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
 	lightViewMatrix = glm::lookAt(glm::vec3(150.0f, 150.0f, 100.0f), glm::vec3(0.0f, 0.0f, -50.0f) + glm::vec3(sunlight, sunlight, 0), glm::vec3(0.0f, 0.0f, -1.0f));
-
+	viewMatrix = glm::lookAt(cameraPos, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void MouseFunc(int button, int state, int x, int y)      // Êó±êº¯Êı£¬  µ¥»÷ÓÒ¼üÔÊĞíÒÆ¶¯ÉãÏñÍ·£¬ ËÉ¿ªÓÒ¼ü¼´²»ÔÊĞíÒÆ¶¯
