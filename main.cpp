@@ -17,16 +17,17 @@ int lastMousePosX, lastMousePosY;  //  上次鼠标的位置
 void DrawRoom();
 void DrawRoomSample();
 
-//bool bDrawRoom1 = true;  // 第一套装修方案
-int bDrawRoom1 = 0;
-int wall1 = 0; //客厅墙壁方案
-int wall2 = 0; //卧室墙壁方案
-int wallDeco = 0;//卧室墙壁装饰
-int floor1 = 0;//卧室地板
-int bed = 0;//卧室床样式
-int window = 0;//卧室窗户样式
+//------------------------------------
+// 物品方案参数
+//------------------------------------
+int bed = 0;        //卧室床样式
+int wallDeco = 0;   //卧室墙壁装饰
+int window = 0;     //卧室窗户样式
+int drawer = 0;     //抽屉样式
 
 int lightOn = 1;   // 是否开启光照
+
+float sunlight = 50.0;//光源的位置
 
 //载入纹理
 void loadTexture() {
